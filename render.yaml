@@ -1,0 +1,43 @@
+# Render.com deployment configuration for backend
+# This file tells Render how to build and run your backend service
+
+# Build Command
+buildCommand: npm install
+
+# Start Command
+startCommand: node server-new.js
+
+# Environment (Node.js)
+envVars:
+  - key: NODE_ENV
+    value: production
+  - key: PORT
+    generateValue: true
+  - key: MONGODB_URI
+    sync: false
+  - key: JWT_SECRET
+    generateValue: true
+  - key: JWT_REFRESH_SECRET
+    generateValue: true
+  - key: CLIENT_URL
+    sync: false
+  - key: SESSION_SECRET
+    generateValue: true
+  - key: CLOUDINARY_CLOUD_NAME
+    sync: false
+  - key: CLOUDINARY_API_KEY
+    sync: false
+  - key: CLOUDINARY_API_SECRET
+    sync: false
+  - key: GOOGLE_CLIENT_ID
+    sync: false
+  - key: GOOGLE_CLIENT_SECRET
+    sync: false
+  - key: GOOGLE_CALLBACK_URL
+    sync: false
+  - key: GITHUB_CLIENT_ID
+    sync: false
+  - key: GITHUB_CLIENT_SECRET
+    sync: false
+  - key: GITHUB_CALLBACK_URL
+    sync: false

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Thread Studioss - Handcrafted with Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #8B5A8C;
+            --secondary-color: #D4A5C7;
+            --accent-color: #F7E7F0;
+            --text-dark: #2D2D2D;
+            --text-light: #6B6B6B;
+            --white: #FFFFFF;
+            --success: #27AE60;
+            --error: #E74C3C;
+            --shadow-light: 0 2px 10px rgba(139, 90, 140, 0.1);
+            --shadow-medium: 0 4px 20px rgba(139, 90, 140, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f8f4f7 0%, #f0e8f5 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--white);
+            box-shadow: var(--shadow-light);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            box-shadow: var(--shadow-medium);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .cart-btn, .login-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .cart-btn:hover, .login-btn:hover {
+            background: #7A4F7B;
+            transform: translateY(-2px);
+        }
+
+        .cart-count {
+            background: var(--error);
+            color: var(--white);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 20px 80px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Products Section */
+        .products-section {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 3rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 20px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* About Section */
+        .about-section {
+            background: var(--white);
+            padding: 60px 20px;
+            margin: 60px 0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .about-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .about-section p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--white);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--white);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #7A4F7B;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .btn-secondary:hover {
+            background: #C69BBE;
+        }
+
+        /* Product Modal */
+        .product-modal-content {
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-modal-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .product-modal-info {
+            padding: 30px;
+        }
+
+        .product-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .product-modal-price {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .product-modal-description {
+            color: var(--text-light);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .product-actions .btn {
+            width: auto;
+            flex: 1;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                padding: 0;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">The Thread Studioss</a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#products" class="nav-link">Products</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#" class="cart-btn" onclick="openCartModal()">
+                    <i class="fas fa-shopping-cart"></i>
+                    Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </a></li>
+                <li><a href="#" class="login-btn" onclick="openAuthModal()">
+                    <i class="fas fa-user"></i>
+                    <span id="authText">Login</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h1>The Thread Studioss</h1>
+        <p>Handcrafted crochet art made with love, care, and a touch of magic ✨</p>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <h2 class="section-title">Our Handcrafted Collection</h2>
+        <div class="products-grid" id="productsGrid">
+            <div class="product-card" onclick="openProductModal('Crocheted Flower Bouquet', 'flower.jpeg', '₹499', 'Beautiful handmade flower bouquet crafted with premium yarn. Perfect for gifting or home decoration.')">
+                <img src="flower.jpeg" alt="Crocheted flowers" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Crocheted Flower Bouquet</h3>
+                    <p class="product-price">₹499</p>
+                    <p class="product-description">Beautiful handmade flower bouquet crafted with premium yarn.</p>
+                </div>
+            </div>
+            <div class="product-card" onclick="openProductModal('Crochet Keychain', 'keychain.jpg', '₹199', 'Adorable handmade keychain perfect for your keys or as a bag accessory. Available in various colors and designs.')">
+                <img src="keychain.jpg" alt="Crochet Keychain" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Crochet Keychain</h3>
+                    <p class="product-price">₹199</p>
+                    <p class="product-description">Adorable handmade keychain perfect for your keys or bag.</p>
+                </div>
+            </div>
+            <div class="product-card" onclick="openProductModal('Flower Basket', 'flowerbasket.jpg', '₹499', 'Elegant flower basket filled with colorful crocheted flowers. A perfect centerpiece for any room or special occasion.')">
+                <img src="flowerbasket.jpg" alt="Flower basket" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Flower Basket</h3>
+                    <p class="product-price">₹499</p>
+                    <p class="product-description">Elegant flower basket filled with colorful crocheted flowers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <h2>About Us</h2>
+        <p>
+            The Thread Studioss is a passion-driven handcraft venture that brings magic to life through the art of crochet. 
+            Every piece is carefully crafted with premium materials, attention to detail, and lots of love. From personalized 
+            keychains to beautiful floral arrangements, we create unique pieces that bring joy and warmth to your life.
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Follow us on Instagram: 
+            <a href="https://www.instagram.com/thethreadstudioss" target="_blank">@thethreadstudioss</a>
+        </p>
+        <p>Made by Pratik Sawant</p>
+    </footer>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content product-modal-content">
+            <div class="modal-header">
+                <h2 id="productModalTitle">Product Details</h2>
+                <button class="close-btn" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <img id="productModalImage" src="" alt="" class="product-modal-image">
+            <div class="product-modal-info">
+                <div class="alert success" id="productAlert"></div>
+                <h3 class="product-modal-title" id="modalTitle"></h3>
+                <p class="product-modal-price" id="modalPrice"></p>
+                <p class="product-modal-description" id="modalDescription"></p>
+                <div class="product-actions">
+                    <button class="btn btn-secondary" onclick="addToCart()">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                    <button class="btn" onclick="buyNow()">
+                        <i class="fas fa-bolt"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authModalTitle">Login</h2>
+                <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert error" id="authAlert"></div>
+                <form id="authForm">
+                    <div class="form-group" id="nameGroup" style="display: none;">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn" id="authSubmitBtn">
+                        <span id="authButtonText">Login</span>
+                        <span class="loading" id="authLoading" style="display: none;"></span>
+                    </button>
+                </form>
+                <div style="text-align: center; margin-top: 15px;">
+                    <span id="authSwitchText">Don't have an account?</span>
+                    <a href="#" onclick="switchAuthMode()" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                        <span id="authSwitchLink">Sign up</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Shopping Cart</h2>
+                <button class="close-btn" onclick="closeModal('cartModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems"></div>
+                <div id="cartEmpty" style="text-align: center; color: var(--text-light); padding: 40px;">
+                    <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <p>Your cart is empty</p>
+                </div>
+                <div id="cartTotal" style="display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+                    <h3 style="text-align: right;">Total: <span id="totalAmount">₹0</span></h3>
+                    <button class="btn" style="margin-top: 15px;" onclick="proceedToCheckout()">
+                        <i class="fas fa-credit-card"></i> Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentProduct = null;
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let isLoginMode = true;
+
+        // API Configuration
+        const API_BASE = 'http://localhost:3000/api';
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            updateAuthState();
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        });
+
+        // Product Modal Functions
+        function openProductModal(title, image, price, description) {
+            currentProduct = { title, image, price, description };
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('productModalImage').src = image;
+            document.getElementById('modalPrice').textContent = price;
+            document.getElementById('modalDescription').textContent = description;
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        function addToCart() {
+            if (currentProduct) {
+                cart.push({
+                    ...currentProduct,
+                    id: Date.now(),
+                    quantity: 1
+                });
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                showAlert('productAlert', `${currentProduct.title} added to cart!`, 'success');
+                setTimeout(() => closeModal('productModal'), 1500);
+            }
+        }
+
+        function buyNow() {
+            if (!isLoggedIn) {
+                closeModal('productModal');
+                openAuthModal();
+                return;
+            }
+            
+            if (currentProduct) {
+                // Simulate purchase
+                showAlert('productAlert', `Thank you for purchasing ${currentProduct.title}! 💖`, 'success');
+                setTimeout(() => closeModal('productModal'), 2000);
+            }
+        }
+
+        // Cart Functions
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function openCartModal() {
+            const cartItems = document.getElementById('cartItems');
+            const cartEmpty = document.getElementById('cartEmpty');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartEmpty.style.display = 'block';
+                cartTotal.style.display = 'none';
+                cartItems.innerHTML = '';
+            } else {
+                cartEmpty.style.display = 'none';
+                cartTotal.style.display = 'block';
+                
+                let total = 0;
+                cartItems.innerHTML = cart.map((item, index) => {
+                    const price = parseInt(item.price.replace('₹', ''));
+                    total += price * (item.quantity || 1);
+                    
+                    return `
+                        <div style="display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee;">
+                            <img src="${item.image}" alt="${item.title}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 15px;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0; font-size: 1rem;">${item.title}</h4>
+                                <p style="margin: 5px 0; color: var(--primary-color); font-weight: 600;">${item.price}</p>
+                            </div>
+                            <button onclick="removeFromCart(${index})" style="background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('totalAmount').textContent = `₹${total}`;
+            }
+            
+            document.getElementById('cartModal').style.display = 'block';
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            openCartModal(); // Refresh the cart modal
+        }
+
+        function proceedToCheckout() {
+            if (!isLoggedIn) {
+                closeModal('cartModal');
+                openAuthModal();
+                return;
+            }
+            
+            alert('Redirecting to checkout... (This would integrate with a payment gateway)');
+        }
+
+        // Auth Functions
+        function updateAuthState() {
+            const authText = document.getElementById('authText');
+            if (isLoggedIn && currentUser) {
+                authText.textContent = currentUser.name || 'Profile';
+            } else {
+                authText.textContent = 'Login';
+            }
+        }
+
+        function openAuthModal() {
+            document.getElementById('authModal').style.display = 'block';
+            clearAuthForm();
+        }
+
+        function switchAuthMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('authModalTitle');
+            const nameGroup = document.getElementById('nameGroup');
+            const submitBtn = document.getElementById('authButtonText');
+            const switchText = document.getElementById('authSwitchText');
+            const switchLink = document.getElementById('authSwitchLink');
+            
+            if (isLoginMode) {
+                title.textContent = 'Login';
+                nameGroup.style.display = 'none';
+                submitBtn.textContent = 'Login';
+                switchText.textContent = "Don't have an account?";
+                switchLink.textContent = 'Sign up';
+            } else {
+                title.textContent = 'Sign Up';
+                nameGroup.style.display = 'block';
+                submitBtn.textContent = 'Sign Up';
+                switchText.textContent = 'Already have an account?';
+                switchLink.textContent = 'Login';
+            }
+            
+            clearAuthForm();
+        }
+
+        function clearAuthForm() {
+            document.getElementById('authForm').reset();
+            hideAlert('authAlert');
+        }
+
+        // Handle auth form submission
+        document.getElementById('authForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loading = document.getElementById('authLoading');
+            const buttonText = document.getElementById('authButtonText');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            
+            // Show loading
+            loading.style.display = 'inline-block';
+            buttonText.style.display = 'none';
+            submitBtn.disabled = true;
+            
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+            
+            if (!isLoginMode) {
+                formData.name = document.getElementById('name').value;
+            }
+            
+            try {
+                const endpoint = isLoginMode ? '/auth/login' : '/auth/register';
+                const response = await fetch(API_BASE + endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Success
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    localStorage.setItem('token', data.token);
+                    isLoggedIn = true;
+                    currentUser = data.user;
+                    updateAuthState();
+                    closeModal('authModal');
+                    showAlert('productAlert', `Welcome ${data.user.name}!`, 'success');
+                } else {
+                    // Error
+                    showAlert('authAlert', data.message || 'Authentication failed', 'error');
+                }
+            } catch (error) {
+                showAlert('authAlert', 'Network error. Please try again.', 'error');
+            } finally {
+                // Hide loading
+                loading.style.display = 'none';
+                buttonText.style.display = 'inline';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Utility Functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showAlert(alertId, message, type) {
+            const alert = document.getElementById(alertId);
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        function hideAlert(alertId) {
+            document.getElementById(alertId).style.display = 'none';
+        }
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

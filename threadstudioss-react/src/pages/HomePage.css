@@ -1,0 +1,131 @@
+.home-page {
+    padding-top: 70px;
+}
+
+.hero {
+    background: linear-gradient(135deg, #f8f4f7 0%, #f0e8f5 100%);
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--primary-color, #8B5A8C);
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    color: var(--text-light, #6B6B6B);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about-preview {
+    background: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.about-preview h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--primary-color, #8B5A8C);
+    margin-bottom: 1.5rem;
+}
+
+.about-preview p {
+    font-size: 1.125rem;
+    color: var(--text-light, #6B6B6B);
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+}
+
+/* Responsive Home */
+@media (max-width: 1024px) {
+    .hero {
+        padding: 70px 20px;
+    }
+    
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+    
+    .about-preview {
+        padding: 50px 20px;
+    }
+    
+    .about-preview h2 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .home-page {
+        padding-top: 65px;
+    }
+    
+    .hero {
+        padding: 60px 15px;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content p {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .about-preview {
+        padding: 40px 15px;
+    }
+    
+    .about-preview h2 {
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .about-preview p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-page {
+        padding-top: 60px;
+    }
+    
+    .hero {
+        padding: 50px 10px;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .about-preview {
+        padding: 35px 10px;
+    }
+    
+    .about-preview h2 {
+        font-size: 1.75rem;
+    }
+    
+    .about-preview p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "threadstudioss-react/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "threadstudioss-react/dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://your-render-backend-url.onrender.com/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/threadstudioss-react/dist/$1"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
