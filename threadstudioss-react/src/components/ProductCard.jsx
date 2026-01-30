@@ -5,11 +5,24 @@ import { useAuth } from '../context/AuthContext';
 import './ProductCard.css';
 
 const ProductCard = ({ product }) => {
-  const { _id, name, price, description, images, stock } = product;
+  const { _id, name, price, description, images } = product;
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
+
+  const resolveImageUrl = (url) => {
+    if (!url) return '/placeholder.jpg';
+    if (typeof url !== 'string') return '/placeholder.jpg';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/')) return url;
+    return `/${encodeURI(url)}`;
+  };
+
+  const primaryImage = Array.isArray(images) ? images[0] : null;
+  const primaryImageUrl =
+    typeof primaryImage === 'string' ? primaryImage : primaryImage?.url;
+  const primaryImageSrc = resolveImageUrl(primaryImageUrl);
   
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
@@ -18,23 +31,18 @@ const ProductCard = ({ product }) => {
     }
 
     setIsAdding(true);
-    addToCart({
-      productId: _id,
-      name,
-      price,
-      image: images?.[0] || '/placeholder.jpg',
-      quantity: 1
-    });
+    addToCart(product, 1);
     setTimeout(() => setIsAdding(false), 1000);
   };
 
-  const isOutOfStock = stock === 0;
+  const inventoryCount = product?.inventory ?? product?.stock;
+  const isOutOfStock = product?.inStock === false || inventoryCount === 0;
   
   return (
     <div className="product-card">
       <Link to={`/products/${_id}`} className="product-link">
         <img 
-          src={images?.[0] || '/placeholder.jpg'} 
+          src={primaryImageSrc} 
           alt={name} 
           className="product-image" 
         />

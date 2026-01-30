@@ -67,25 +67,39 @@ const ProductDetailPage = () => {
     const currentPrice = product.salePrice || product.price;
     const hasDiscount = product.salePrice && product.salePrice < product.price;
 
+    const resolveImageUrl = (url) => {
+        if (!url) return '/placeholder.jpg';
+        if (typeof url !== 'string') return '/placeholder.jpg';
+        if (url.startsWith('http://') || url.startsWith('https://')) return url;
+        if (url.startsWith('/')) return url;
+        return `/${encodeURI(url)}`;
+    };
+
+    const firstImage = product.images?.[0];
+    const mainImageUrl = typeof firstImage === 'string' ? firstImage : firstImage?.url;
+
     return (
         <div className="product-detail-page">
             <div className="product-detail-container">
                 <div className="product-images">
                     <img
-                        src={product.images[0]?.url || '/placeholder.jpg'}
+                        src={resolveImageUrl(mainImageUrl)}
                         alt={product.name}
                         className="main-image"
                     />
-                    {product.images.length > 1 && (
+                    {(product.images?.length ?? 0) > 1 && (
                         <div className="thumbnail-images">
-                            {product.images.map((img, index) => (
-                                <img
-                                    key={index}
-                                    src={img.url}
-                                    alt={`${product.name} ${index + 1}`}
-                                    className="thumbnail"
-                                />
-                            ))}
+                            {product.images.map((img, index) => {
+                                const imgUrl = typeof img === 'string' ? img : img?.url;
+                                return (
+                                    <img
+                                        key={index}
+                                        src={resolveImageUrl(imgUrl)}
+                                        alt={`${product.name} ${index + 1}`}
+                                        className="thumbnail"
+                                    />
+                                );
+                            })}
                         </div>
                     )}
                 </div>

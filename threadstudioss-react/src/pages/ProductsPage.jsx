@@ -22,7 +22,12 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await productsAPI.getAll(filters);
+            const params = { ...filters, limit: 100, page: 1 };
+            if (params.category === 'all') {
+                delete params.category;
+            }
+
+            const response = await productsAPI.getAll(params);
             setProducts(response.data.products);
         } catch (err) {
             setError('Failed to load products');

@@ -16,7 +16,7 @@ router.post('/', authenticateToken, validate(orderSchema), async (req, res) => {
 
         for (const item of items) {
             const product = await Product.findById(item.productId);
-            if (!product || !product.isActive) {
+            if (!product || product.isActive === false) {
                 return res.status(400).json({ 
                     error: `Product ${item.productId} not found or unavailable` 
                 });
@@ -82,6 +82,12 @@ router.post('/', authenticateToken, validate(orderSchema), async (req, res) => {
 
     } catch (error) {
         console.error('Create order error:', error);
+        if (error?.name === 'ValidationError') {
+            return res.status(400).json({ error: error.message });
+        }
+        if (error?.code === 11000) {
+            return res.status(409).json({ error: 'Duplicate order detected, please retry' });
+        }
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -246,6 +252,16 @@ router.put('/:id/status', authenticateToken, requireAdmin, validate(orderUpdateS
                 order.deliveredAt = new Date();
                 order.paymentStatus = 'paid'; // Auto-mark as paid on delivery for COD
             }
+        }
+
+        // Allow appending a log entry without changing status
+        if (!status && adminNotes) {
+            order.statusHistory.push({
+                status: order.status,
+                timestamp: new Date(),
+                note: adminNotes,
+                updatedBy: req.user._id
+            });
         }
 
         if (trackingNumber) order.trackingNumber = trackingNumber;

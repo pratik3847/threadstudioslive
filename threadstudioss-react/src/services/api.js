@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = RAW_API_URL.replace(/\/$/, '').endsWith('/api')
+    ? RAW_API_URL.replace(/\/$/, '')
+    : `${RAW_API_URL.replace(/\/$/, '')}/api`;
 
 // Create axios instance
 const api = axios.create({
@@ -15,7 +18,14 @@ api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            if (config.headers && typeof config.headers.set === 'function') {
+                config.headers.set('Authorization', `Bearer ${token}`);
+            } else {
+                config.headers = {
+                    ...(config.headers || {}),
+                    Authorization: `Bearer ${token}`
+                };
+            }
         }
         return config;
     },
@@ -30,8 +40,18 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // If error is 401 and we haven't tried refreshing yet
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        const status = error.response?.status;
+        const errorCode = error.response?.data?.code;
+
+        // Our backend uses:
+        // - 401 for missing token / user not found
+        // - 403 for expired/invalid token
+        const shouldAttemptRefresh =
+            status === 401 ||
+            (status === 403 && (errorCode === 'TOKEN_EXPIRED' || errorCode === 'INVALID_TOKEN'));
+
+        // If auth failed and we haven't tried refreshing yet
+        if (shouldAttemptRefresh && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
@@ -49,7 +69,17 @@ api.interceptors.response.use(
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', newRefreshToken);
 
-                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                // Ensure subsequent requests include the new token
+                api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+
+                if (originalRequest.headers && typeof originalRequest.headers.set === 'function') {
+                    originalRequest.headers.set('Authorization', `Bearer ${accessToken}`);
+                } else {
+                    originalRequest.headers = {
+                        ...(originalRequest.headers || {}),
+                        Authorization: `Bearer ${accessToken}`
+                    };
+                }
                 return api(originalRequest);
             } catch (refreshError) {
                 // Refresh failed, logout user

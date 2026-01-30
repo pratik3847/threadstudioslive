@@ -15,6 +15,8 @@ const CartPage = () => {
         name: '',
         phone: '',
         street: '',
+        addressLine2: '',
+        landmark: '',
         city: '',
         state: '',
         zipCode: '',
@@ -40,13 +42,45 @@ const CartPage = () => {
         setError('');
 
         try {
+            const sanitizedShippingAddress = {
+                ...shippingAddress,
+                name: String(shippingAddress.name || '').trim(),
+                street: String(shippingAddress.street || '').trim(),
+                addressLine2: String(shippingAddress.addressLine2 || '').trim(),
+                landmark: String(shippingAddress.landmark || '').trim(),
+                city: String(shippingAddress.city || '').trim(),
+                state: String(shippingAddress.state || '').trim(),
+                country: String(shippingAddress.country || 'India').trim(),
+                phone: String(shippingAddress.phone || '').replace(/\D/g, ''),
+                zipCode: String(shippingAddress.zipCode || '').replace(/\D/g, '')
+            };
+
+            if (sanitizedShippingAddress.street.length < 5) {
+                setError(
+                    `Street Address must be at least 5 characters (got ${sanitizedShippingAddress.street.length}). ` +
+                        `Value: "${sanitizedShippingAddress.street || ''}"`
+                );
+                setLoading(false);
+                return;
+            }
+
+            const orderItems = cart.map(item => ({
+                productId: item.productId || item._id || item.id,
+                quantity: item.quantity,
+                customization: item.customization || []
+            }));
+
+            const isValidObjectId = (value) => /^[a-f\d]{24}$/i.test(String(value || ''));
+            const invalidItem = orderItems.find(i => !i.productId || !isValidObjectId(i.productId));
+            if (invalidItem) {
+                setError('Your cart has outdated items. Please clear the cart and add products again.');
+                setLoading(false);
+                return;
+            }
+
             const orderData = {
-                items: cart.map(item => ({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    customization: item.customization || []
-                })),
-                shippingAddress,
+                items: orderItems,
+                shippingAddress: sanitizedShippingAddress,
                 paymentMethod: 'cod'
             };
 
@@ -54,7 +88,24 @@ const CartPage = () => {
             clearCart();
             navigate(`/orders`);
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to place order');
+            const apiError = err.response?.data;
+            const details = Array.isArray(apiError?.details) ? apiError.details : null;
+            if (details && details.length > 0) {
+                const detailText = details
+                    .map((d) => `${d.field || 'field'}: ${d.message || 'invalid'}`)
+                    .join(' | ');
+                setError(detailText);
+            } else {
+                setError(apiError?.error || 'Failed to place order');
+            }
+            console.error('Place order error:', apiError || err);
+            if (apiError) {
+                try {
+                    console.error('Place order error details:', JSON.stringify(apiError, null, 2));
+                } catch (_) {
+                    // ignore
+                }
+            }
         } finally {
             setLoading(false);
         }
@@ -115,7 +166,23 @@ const CartPage = () => {
                                     value={shippingAddress.street}
                                     onChange={handleAddressChange}
                                     required
+                                    minLength={5}
                                     className="full-width"
+                                />
+                                <input
+                                    type="text"
+                                    name="addressLine2"
+                                    placeholder="Apartment / House No. (optional)"
+                                    value={shippingAddress.addressLine2}
+                                    onChange={handleAddressChange}
+                                    className="full-width"
+                                />
+                                <input
+                                    type="text"
+                                    name="landmark"
+                                    placeholder="Landmark (optional)"
+                                    value={shippingAddress.landmark}
+                                    onChange={handleAddressChange}
                                 />
                                 <input
                                     type="text"
@@ -141,6 +208,13 @@ const CartPage = () => {
                                     onChange={handleAddressChange}
                                     required
                                     pattern="[0-9]{6}"
+                                />
+                                <input
+                                    type="text"
+                                    name="country"
+                                    placeholder="Country"
+                                    value={shippingAddress.country}
+                                    onChange={handleAddressChange}
                                 />
                             </div>
                         </div>

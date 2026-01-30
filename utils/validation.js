@@ -253,6 +253,8 @@ const orderSchema = Joi.object({
             'string.pattern.base': 'Please enter a valid 10-digit phone number'
         }),
         street: Joi.string().min(5).max(200).required(),
+        addressLine2: Joi.string().max(200).optional(),
+        landmark: Joi.string().max(100).optional(),
         city: Joi.string().min(2).max(50).required(),
         state: Joi.string().min(2).max(50).required(),
         zipCode: Joi.string().pattern(/^\d{6}$/).required().messages({
@@ -264,6 +266,8 @@ const orderSchema = Joi.object({
         name: Joi.string().min(2).max(50).optional(),
         phone: Joi.string().pattern(/^\d{10}$/).optional(),
         street: Joi.string().min(5).max(200).optional(),
+        addressLine2: Joi.string().max(200).optional(),
+        landmark: Joi.string().max(100).optional(),
         city: Joi.string().min(2).max(50).optional(),
         state: Joi.string().min(2).max(50).optional(),
         zipCode: Joi.string().pattern(/^\d{6}$/).optional(),

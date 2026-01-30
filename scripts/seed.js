@@ -100,6 +100,10 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -119,183 +123,178 @@ async function seedDatabase() {
     try {
         console.log('🌱 Starting database seeding...');
 
-        // Clear existing data
-        await User.deleteMany({});
+        // Clear existing product data (do NOT delete users)
         await Product.deleteMany({});
-        console.log('🧹 Cleared existing data');
+        console.log('🧹 Cleared existing products');
 
-        // Create admin user
-        const hashedPassword = await bcrypt.hash('admin123', 12);
-        const adminUser = new User({
-            name: 'Admin User',
-            email: 'admin@threadstudioss.com',
-            password: hashedPassword,
-            role: 'admin',
-            isVerified: true,
-            phone: '9876543210',
-            address: {
-                street: '123 Craft Street',
-                city: 'Mumbai',
-                state: 'Maharashtra',
-                zipCode: '400001',
-                country: 'India'
-            }
-        });
+        let usersCreated = 0;
 
-        await adminUser.save();
-        console.log('👤 Created admin user');
+        // Create demo admin user if it doesn't already exist
+        const adminEmail = 'admin@threadstudioss.com';
+        const existingAdmin = await User.findOne({ email: adminEmail });
+        if (!existingAdmin) {
+            const hashedPassword = await bcrypt.hash('admin123', 12);
+            const adminUser = new User({
+                name: 'Admin User',
+                email: adminEmail,
+                password: hashedPassword,
+                role: 'admin',
+                isVerified: true,
+                phone: '9876543210',
+                address: {
+                    street: '123 Craft Street',
+                    city: 'Mumbai',
+                    state: 'Maharashtra',
+                    zipCode: '400001',
+                    country: 'India'
+                }
+            });
 
-        // Create sample customer
-        const customerPassword = await bcrypt.hash('customer123', 12);
-        const customerUser = new User({
-            name: 'John Doe',
-            email: 'customer@example.com',
-            password: customerPassword,
-            role: 'customer',
-            isVerified: true,
-            phone: '9876543211',
-            address: {
-                street: '456 Main Street',
-                city: 'Pune',
-                state: 'Maharashtra',
-                zipCode: '411001',
-                country: 'India'
-            }
-        });
+            await adminUser.save();
+            usersCreated += 1;
+            console.log('👤 Created admin user');
+        } else {
+            console.log('👤 Admin user already exists (skipped)');
+        }
 
-        await customerUser.save();
-        console.log('👤 Created sample customer');
+        // Create demo customer if it doesn't already exist
+        const customerEmail = 'customer@example.com';
+        const existingCustomer = await User.findOne({ email: customerEmail });
+        if (!existingCustomer) {
+            const customerPassword = await bcrypt.hash('customer123', 12);
+            const customerUser = new User({
+                name: 'John Doe',
+                email: customerEmail,
+                password: customerPassword,
+                role: 'customer',
+                isVerified: true,
+                phone: '9876543211',
+                address: {
+                    street: '456 Main Street',
+                    city: 'Pune',
+                    state: 'Maharashtra',
+                    zipCode: '411001',
+                    country: 'India'
+                }
+            });
 
-        // Create sample products
+            await customerUser.save();
+            usersCreated += 1;
+            console.log('👤 Created sample customer');
+        } else {
+            console.log('👤 Sample customer already exists (skipped)');
+        }
+
+        // Create products that match the images you provided (one product per image file)
         const products = [
             {
-                name: 'Crocheted Rose Bouquet',
-                description: 'Beautiful handmade rose bouquet crafted with premium cotton yarn. Perfect for gifting or home decoration. Available in red, pink, and white.',
-                price: 599,
-                category: 'flowers',
-                images: [
-                    { url: 'flower.jpeg', alt: 'Crocheted Rose Bouquet' }
-                ],
-                inStock: true,
-                inventory: 15,
-                tags: ['roses', 'bouquet', 'handmade', 'cotton'],
-                featured: true
-            },
-            {
-                name: 'Cute Animal Keychain',
-                description: 'Adorable handmade animal keychains perfect for your keys or as a bag accessory. Available in various animals like cats, dogs, bears, and rabbits.',
+                name: 'Cute Keychain',
+                description: 'Adorable handmade animal keychain perfect for your keys or as a bag accessory.',
                 price: 199,
                 category: 'keychain',
-                images: [
-                    { url: 'keychain.jpg', alt: 'Cute Animal Keychain' }
-                ],
+                images: [{ url: 'keychain.jpg', alt: 'Cute Animal Keychain' }],
                 inStock: true,
                 inventory: 50,
-                tags: ['keychain', 'animals', 'cute', 'accessories'],
+                tags: ['keychain', 'cute', 'accessory'],
                 featured: true
             },
             {
                 name: 'Flower Basket Arrangement',
-                description: 'Elegant flower basket filled with colorful crocheted flowers. A perfect centerpiece for any room or special occasion. Comes with a handwoven basket.',
+                description: 'Elegant flower basket filled with colorful crocheted flowers. A perfect centerpiece for any room.',
                 price: 799,
                 category: 'baskets',
-                images: [
-                    { url: 'flowerbasket.jpg', alt: 'Flower Basket Arrangement' }
-                ],
+                images: [{ url: 'flowerbasket.jpg', alt: 'Flower Basket Arrangement' }],
                 inStock: true,
                 inventory: 10,
-                tags: ['basket', 'flowers', 'centerpiece', 'decoration'],
+                tags: ['basket', 'flowers', 'decor'],
                 featured: true
             },
             {
-                name: 'Sunflower Bunch',
-                description: 'Bright and cheerful crocheted sunflowers that bring sunshine to any space. Set of 5 sunflowers with stems.',
-                price: 449,
+                name: 'Classic Flower Bouquet',
+                description: 'A beautiful classic bouquet made with premium yarn. Perfect for gifting and home decoration.',
+                price: 599,
                 category: 'flowers',
-                images: [
-                    { url: 'flower.jpeg', alt: 'Sunflower Bunch' }
-                ],
+                images: [{ url: 'flower.jpeg', alt: 'Classic Flower Bouquet' }],
+                inStock: true,
+                inventory: 15,
+                tags: ['bouquet', 'handmade', 'gift'],
+                featured: true
+            },
+            {
+                name: 'Crocheted Summer Top',
+                description: 'Stylish handmade summer top perfect for warm weather. Made with breathable cotton yarn.',
+                price: 1299,
+                category: 'accessories',
+                images: [{ url: 'crocheted top.jpg', alt: 'Crocheted Summer Top' }],
+                inStock: true,
+                inventory: 15,
+                tags: ['top', 'summer', 'handmade'],
+                featured: true
+            },
+            {
+                name: 'Crocheted Flower Pot Cover',
+                description: 'Decorative pot cover with intricate flower patterns. Perfect for dressing up your indoor plants.',
+                price: 449,
+                category: 'accessories',
+                images: [{ url: 'crochetedflowerpot.png', alt: 'Crocheted Flower Pot Cover' }],
                 inStock: true,
                 inventory: 20,
-                tags: ['sunflower', 'bright', 'cheerful', 'set'],
+                tags: ['pot cover', 'plants', 'home decor'],
                 featured: false
             },
             {
-                name: 'Personalized Name Keychain',
-                description: 'Custom name keychains made to order. Choose your favorite colors and get your name or any text crocheted beautifully.',
-                price: 299,
-                category: 'keychain',
-                images: [
-                    { url: 'keychain.jpg', alt: 'Personalized Name Keychain' }
-                ],
-                inStock: true,
-                inventory: 100,
-                tags: ['personalized', 'custom', 'name', 'keychain'],
-                featured: false
-            },
-            {
-                name: 'Mini Plant Pot Cover',
-                description: 'Cute mini pot covers for your small plants. Made with soft cotton yarn in various colors and patterns.',
-                price: 349,
-                category: 'accessories',
-                images: [
-                    { url: 'flowerbasket.jpg', alt: 'Mini Plant Pot Cover' }
-                ],
-                inStock: true,
-                inventory: 25,
-                tags: ['pot cover', 'plants', 'home decor', 'mini'],
-                featured: false
-            },
-            {
-                name: 'Custom Birthday Bouquet',
-                description: 'Special birthday bouquet with customizable colors and flower types. Perfect for birthdays and celebrations.',
-                price: 699,
-                category: 'custom',
-                images: [
-                    { url: 'flower.jpeg', alt: 'Custom Birthday Bouquet' }
-                ],
-                inStock: true,
-                inventory: 5,
-                tags: ['birthday', 'custom', 'celebration', 'special'],
-                featured: false
-            },
-            {
-                name: 'Lavender Bouquet',
-                description: 'Calming lavender-colored flower bouquet with a subtle fragrance. Perfect for relaxation and aromatherapy.',
-                price: 549,
+                name: 'Premium Roses Bouquet',
+                description: 'Exquisite handcrafted roses bouquet with detailed petals and realistic appearance.',
+                price: 899,
                 category: 'flowers',
-                images: [
-                    { url: 'flower.jpeg', alt: 'Lavender Bouquet' }
-                ],
+                images: [{ url: 'crochetedrosesbouqet.png', alt: 'Premium Roses Bouquet' }],
                 inStock: true,
                 inventory: 12,
-                tags: ['lavender', 'calming', 'aromatherapy', 'purple'],
-                featured: false
+                tags: ['roses', 'romantic', 'gift'],
+                featured: true
             },
             {
-                name: 'Heart Keychain Set',
-                description: 'Set of 3 heart-shaped keychains in different sizes. Perfect for couples or best friends.',
-                price: 399,
-                category: 'keychain',
-                images: [
-                    { url: 'keychain.jpg', alt: 'Heart Keychain Set' }
-                ],
+                name: 'Adorable Soft Toy',
+                description: 'Cuddly soft toy perfect for gifting. Made with super soft yarn in vibrant colors.',
+                price: 799,
+                category: 'accessories',
+                images: [{ url: 'crochetedsofttoy.png', alt: 'Adorable Soft Toy' }],
                 inStock: true,
-                inventory: 30,
-                tags: ['heart', 'set', 'couples', 'love'],
-                featured: false
+                inventory: 25,
+                tags: ['soft toy', 'gift', 'handmade'],
+                featured: true
             },
             {
-                name: 'Hanging Flower Basket',
-                description: 'Beautiful hanging basket with cascading crocheted flowers. Perfect for balconies and patios.',
-                price: 899,
-                category: 'baskets',
-                images: [
-                    { url: 'flowerbasket.jpg', alt: 'Hanging Flower Basket' }
-                ],
+                name: 'Bright Sunflower Bouquet',
+                description: 'Cheerful sunflower bouquet that brings warmth and happiness to any space.',
+                price: 649,
+                category: 'flowers',
+                images: [{ url: 'crochetedsunflowerbouqet.png', alt: 'Bright Sunflower Bouquet' }],
                 inStock: true,
-                inventory: 8,
-                tags: ['hanging', 'cascading', 'balcony', 'patio'],
+                inventory: 18,
+                tags: ['sunflower', 'cheerful', 'decor'],
+                featured: true
+            },
+            {
+                name: 'Heart-Shaped Flower Arrangement',
+                description: 'Romantic heart-shaped flower arrangement perfect for anniversaries or special occasions.',
+                price: 749,
+                category: 'flowers',
+                images: [{ url: 'heartshapeflower.png', alt: 'Heart-Shaped Flower Arrangement' }],
+                inStock: true,
+                inventory: 14,
+                tags: ['heart', 'romantic', 'gift'],
+                featured: true
+            },
+            {
+                name: 'Elegant Lily Bouquet',
+                description: 'Sophisticated lily bouquet with graceful stems and beautiful blooms.',
+                price: 699,
+                category: 'flowers',
+                images: [{ url: 'lilybouqet.png', alt: 'Elegant Lily Bouquet' }],
+                inStock: true,
+                inventory: 16,
+                tags: ['lily', 'elegant', 'gift'],
                 featured: false
             }
         ];
@@ -305,7 +304,7 @@ async function seedDatabase() {
 
         console.log('✅ Database seeding completed successfully!');
         console.log('\n📊 Summary:');
-        console.log(`👤 Users created: 2 (1 admin, 1 customer)`);
+        console.log(`👤 Users created: ${usersCreated} (existing users preserved)`);
         console.log(`🌸 Products created: ${products.length}`);
         console.log('\n🔐 Admin Login:');
         console.log('Email: admin@threadstudioss.com');

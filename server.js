@@ -14,7 +14,11 @@ const app = express();
 app.use(helmet()); // Security headers
 app.use(morgan('combined')); // Logging
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+        process.env.FRONTEND_URL || 'http://localhost:3000',
+        'http://localhost:5173',
+        'http://localhost:5174'
+    ],
     credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -418,8 +422,8 @@ app.get('/api/products', async (req, res) => {
         
         let filter = { inStock: true };
         
-        if (category) filter.category = category;
-        if (featured) filter.featured = featured === 'true';
+        if (category && category !== 'all') filter.category = category;
+        if (featured !== undefined) filter.featured = featured === 'true';
         if (search) {
             filter.$or = [
                 { name: { $regex: search, $options: 'i' } },
@@ -428,17 +432,20 @@ app.get('/api/products', async (req, res) => {
             ];
         }
 
+        const pageNum = Math.max(1, parseInt(page, 10) || 1);
+        const limitNum = Math.max(1, Math.min(100, parseInt(limit, 10) || 10));
+
         const products = await Product.find(filter)
             .sort({ createdAt: -1 })
-            .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .limit(limitNum)
+            .skip((pageNum - 1) * limitNum);
 
         const total = await Product.countDocuments(filter);
 
         res.json({
             products,
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
+            totalPages: Math.ceil(total / limitNum),
+            currentPage: pageNum,
             total
         });
 

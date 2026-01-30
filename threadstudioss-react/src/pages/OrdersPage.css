@@ -1,7 +1,9 @@
 .orders-page {
     min-height: 100vh;
     padding: 100px 20px 60px;
-    background: #f9f9f9;
+    background: radial-gradient(1200px 500px at 20% 0%, rgba(212, 165, 199, 0.22), transparent 55%),
+        radial-gradient(900px 500px at 90% 10%, rgba(139, 90, 140, 0.16), transparent 60%),
+        #f9f9f9;
 }
 
 .orders-container {
@@ -9,11 +11,25 @@
     margin: 0 auto;
 }
 
-.orders-container h1 {
+.orders-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.orders-header h1 {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
     color: #8B5A8C;
-    margin-bottom: 2rem;
+    margin: 0;
+}
+
+.orders-header p {
+    margin: 0;
+    color: #6B6B6B;
+    font-size: 1rem;
 }
 
 .orders-list {
@@ -27,6 +43,13 @@
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(139, 90, 140, 0.14);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10);
 }
 
 .order-header {
@@ -42,6 +65,12 @@
     font-size: 1.3rem;
     color: #2D2D2D;
     margin-bottom: 6px;
+}
+
+.order-submeta {
+    font-weight: 600;
+    color: #6B6B6B;
+    font-size: 0.95rem;
 }
 
 .order-date {
@@ -103,6 +132,7 @@
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 700;
+    letter-spacing: 0.4px;
 }
 
 .status-pending {
@@ -140,10 +170,12 @@
 }
 
 .order-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
     gap: 16px;
-    padding: 12px 0;
+    padding: 14px 0;
     border-bottom: 1px solid #f0f0f0;
+    align-items: center;
 }
 
 .order-item:last-child {
@@ -155,6 +187,7 @@
     height: 80px;
     object-fit: cover;
     border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .order-item-details h4 {
@@ -167,6 +200,15 @@
     color: #6B6B6B;
     font-size: 0.9rem;
     margin: 4px 0;
+}
+
+.order-item-qty {
+    margin: 0;
+}
+
+.order-item-total {
+    text-align: right;
+    min-width: 90px;
 }
 
 .order-item-price {
@@ -267,7 +309,146 @@
     transform: translateY(-2px);
 }
 
+.btn-secondary {
+    background: rgba(139, 90, 140, 0.10);
+    color: #8B5A8C;
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid rgba(139, 90, 140, 0.22);
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(139, 90, 140, 0.16);
+    border-color: rgba(139, 90, 140, 0.30);
+    transform: translateY(-1px);
+}
+
+.btn-primary,
+.btn-secondary {
+    cursor: pointer;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Admin order panel */
+.admin-panel {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(139, 90, 140, 0.18);
+    background:
+        radial-gradient(800px 220px at 10% 0%, rgba(212, 165, 199, 0.18), transparent 60%),
+        radial-gradient(600px 220px at 90% 20%, rgba(139, 90, 140, 0.12), transparent 60%),
+        rgba(255, 255, 255, 0.95);
+}
+
+.admin-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.admin-row + .admin-row {
+    margin-top: 10px;
+}
+
+.admin-select,
+.admin-input {
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    padding: 0 12px;
+    font-size: 0.95rem;
+    outline: none;
+    min-width: 180px;
+}
+
+.admin-input--date {
+    min-width: 160px;
+}
+
+.admin-select:focus,
+.admin-input:focus {
+    border-color: rgba(139, 90, 140, 0.55);
+    box-shadow: 0 0 0 4px rgba(139, 90, 140, 0.14);
+}
+
+.admin-input--full {
+    flex: 1 1 320px;
+    min-width: 240px;
+}
+
+.admin-logs {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(139, 90, 140, 0.22);
+}
+
+.admin-logs-title {
+    font-weight: 800;
+    color: #2D2D2D;
+    margin-bottom: 8px;
+}
+
+.admin-logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-log-item {
+    display: grid;
+    grid-template-columns: 160px 140px 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(139, 90, 140, 0.06);
+    border: 1px solid rgba(139, 90, 140, 0.12);
+    font-size: 0.92rem;
+}
+
+.admin-log-date {
+    color: #6B6B6B;
+    font-weight: 700;
+}
+
+.admin-log-status {
+    font-weight: 900;
+    color: #8B5A8C;
+    letter-spacing: 0.3px;
+}
+
+.admin-log-note {
+    color: #2D2D2D;
+}
+
+@media (max-width: 640px) {
+    .admin-log-item {
+        grid-template-columns: 1fr;
+    }
+    .admin-select,
+    .admin-input {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 @media (max-width: 768px) {
+    .orders-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .order-header {
         flex-direction: column;
         gap: 12px;
@@ -282,11 +463,17 @@
     }
 
     .order-item {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-items: start;
     }
 
     .order-item-image {
         width: 100%;
         height: 200px;
+    }
+
+    .order-item-total {
+        text-align: left;
     }
 }

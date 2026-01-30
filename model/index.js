@@ -218,7 +218,8 @@ const orderSchema = new mongoose.Schema({
     orderNumber: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        default: () => 'TS' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase()
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -303,6 +304,12 @@ const orderSchema = new mongoose.Schema({
             type: String,
             required: true
         },
+        addressLine2: {
+            type: String
+        },
+        landmark: {
+            type: String
+        },
         city: {
             type: String,
             required: true
@@ -324,6 +331,8 @@ const orderSchema = new mongoose.Schema({
         name: String,
         phone: String,
         street: String,
+        addressLine2: String,
+        landmark: String,
         city: String,
         state: String,
         zipCode: String,
@@ -353,13 +362,7 @@ const orderSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Generate order number before saving
-orderSchema.pre('save', function(next) {
-    if (this.isNew && !this.orderNumber) {
-        this.orderNumber = 'TS' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
-    }
-    next();
-});
+// orderNumber is generated via schema default
 
 // Add indexes for better performance
 orderSchema.index({ userId: 1, createdAt: -1 });

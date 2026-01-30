@@ -34,7 +34,7 @@
 3. Select "Web application"
 4. Name: "Thread Studioss Web Client"
 5. Add Authorized JavaScript origins:
-   - `http://localhost:3000`
+   - `http://localhost:5173`
    - `http://localhost:5000`
    - `https://your-frontend-url.vercel.app` (production)
 6. Add Authorized redirect URIs:
@@ -93,7 +93,7 @@ GITHUB_CALLBACK_URL=http://localhost:5000/api/auth/github/callback
 
 1. Start your backend: `npm run dev`
 2. Start your frontend: `cd threadstudioss-react && npm run dev`
-3. Go to `http://localhost:3000/login`
+3. Go to `http://localhost:5173/login`
 4. Click "Continue with Google"
 5. Select your Google account
 6. You should be redirected back logged in!

@@ -55,6 +55,11 @@ app.get('/', (req, res) => {
     });
 });
 
+// Avoid noisy favicon 404s when the browser hits the API origin directly
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).end();
+});
+
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
@@ -92,6 +97,8 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📡 API available at http://localhost:${PORT}/api`);
     console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔗 CLIENT_URL: ${process.env.CLIENT_URL || '(not set)'}`);
+    console.log(`🔗 FRONTEND_URL: ${process.env.FRONTEND_URL || '(not set)'}`);
 });
 
 module.exports = app;

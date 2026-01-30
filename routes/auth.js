@@ -10,6 +10,28 @@ const {
     userLoginSchema 
 } = require('../utils/validation');
 
+const resolveFrontendUrl = () => {
+    const candidate = process.env.FRONTEND_URL || process.env.CLIENT_URL;
+
+    // Common misconfig: FRONTEND_URL=undefined (string) or empty
+    const cleaned = (candidate || '').trim();
+    if (!cleaned || cleaned.toLowerCase() === 'undefined' || cleaned.toLowerCase() === 'null') {
+        return 'http://localhost:5173';
+    }
+
+    // Ensure no trailing slash
+    const withoutTrailingSlash = cleaned.replace(/\/$/, '');
+
+    // If someone provided just host:port, make it a valid absolute URL
+    if (!/^https?:\/\//i.test(withoutTrailingSlash)) {
+        return `http://${withoutTrailingSlash}`;
+    }
+
+    return withoutTrailingSlash;
+};
+
+const FRONTEND_URL = resolveFrontendUrl();
+
 // Generate JWT tokens
 const generateTokens = (userId) => {
     const accessToken = jwt.sign(
@@ -49,7 +71,7 @@ router.post('/register', validate(userRegistrationSchema), async (req, res) => {
             email: email.toLowerCase().trim(),
             password: hashedPassword,
             authProvider: 'local',
-            isVerified: false // Set to true in production after email verification
+            isVerified: process.env.NODE_ENV !== 'production' // Require email verification only in production
         });
 
         await user.save();
@@ -227,7 +249,7 @@ router.get('/google',
 router.get('/google/callback',
     passport.authenticate('google', { 
         session: false,
-        failureRedirect: `${process.env.FRONTEND_URL}/login?error=oauth_failed`
+        failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed`
     }),
     async (req, res) => {
         try {
@@ -238,9 +260,8 @@ router.get('/google/callback',
             req.user.refreshToken = refreshToken;
             await req.user.save();
 
-            // Redirect to frontend with tokens
-            res.redirect(
-                `${process.env.FRONTEND_URL}/auth/callback?` +
+            const redirectUrl =
+                `${FRONTEND_URL}/auth/callback?` +
                 `accessToken=${accessToken}&` +
                 `refreshToken=${refreshToken}&` +
                 `user=${encodeURIComponent(JSON.stringify({
@@ -249,11 +270,17 @@ router.get('/google/callback',
                     email: req.user.email,
                     role: req.user.role,
                     avatar: req.user.avatar
-                }))}`
-            );
+                }))}`;
+
+            if ((process.env.NODE_ENV || 'development') !== 'production') {
+                console.log('[OAuth] Google callback redirect base:', FRONTEND_URL);
+            }
+
+            // Redirect to frontend with tokens
+            res.redirect(redirectUrl);
         } catch (error) {
             console.error('Google OAuth callback error:', error);
-            res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
+            res.redirect(`${FRONTEND_URL}/login?error=auth_failed`);
         }
     }
 );
@@ -269,7 +296,7 @@ router.get('/github',
 router.get('/github/callback',
     passport.authenticate('github', { 
         session: false,
-        failureRedirect: `${process.env.FRONTEND_URL}/login?error=oauth_failed`
+        failureRedirect: `${FRONTEND_URL}/login?error=oauth_failed`
     }),
     async (req, res) => {
         try {
@@ -282,7 +309,7 @@ router.get('/github/callback',
 
             // Redirect to frontend with tokens
             res.redirect(
-                `${process.env.FRONTEND_URL}/auth/callback?` +
+                `${FRONTEND_URL}/auth/callback?` +
                 `accessToken=${accessToken}&` +
                 `refreshToken=${refreshToken}&` +
                 `user=${encodeURIComponent(JSON.stringify({
@@ -295,7 +322,7 @@ router.get('/github/callback',
             );
         } catch (error) {
             console.error('GitHub OAuth callback error:', error);
-            res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
+            res.redirect(`${FRONTEND_URL}/login?error=auth_failed`);
         }
     }
 );

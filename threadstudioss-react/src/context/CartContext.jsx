@@ -13,6 +13,14 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
 
+    const resolveImageUrl = (url) => {
+        if (!url) return 'https://via.placeholder.com/400x400?text=No+Image';
+        if (typeof url !== 'string') return 'https://via.placeholder.com/400x400?text=No+Image';
+        if (url.startsWith('http://') || url.startsWith('https://')) return url;
+        if (url.startsWith('/')) return url;
+        return `/${encodeURI(url)}`;
+    };
+
     // Load cart from localStorage on mount
     useEffect(() => {
         const storedCart = localStorage.getItem('cart');
@@ -32,9 +40,14 @@ export const CartProvider = ({ children }) => {
     }, [cart]);
 
     const addToCart = (product, quantity = 1, customization = []) => {
+        const productId = product?._id || product?.productId;
+        const primaryImage = Array.isArray(product?.images) ? product.images[0] : null;
+        const primaryImageUrl = typeof primaryImage === 'string' ? primaryImage : primaryImage?.url;
+        const image = resolveImageUrl(primaryImageUrl || product?.image);
+
         setCart(prevCart => {
             const existingIndex = prevCart.findIndex(
-                item => item.productId === product._id && 
+                item => item.productId === productId && 
                 JSON.stringify(item.customization) === JSON.stringify(customization)
             );
 
@@ -48,10 +61,10 @@ export const CartProvider = ({ children }) => {
                 return [
                     ...prevCart,
                     {
-                        productId: product._id || product.productId,
+                        productId,
                         name: product.name,
                         price: product.salePrice || product.price,
-                        image: product.images?.[0] || product.image || 'https://via.placeholder.com/400x400?text=No+Image',
+                        image,
                         quantity,
                         customization
                     }

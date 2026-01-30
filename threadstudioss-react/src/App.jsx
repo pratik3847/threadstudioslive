@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import ProfilePage from './pages/ProfilePage'
 import OrdersPage from './pages/OrdersPage'
+import AdminOrdersPage from './pages/AdminOrdersPage'
 import AuthCallback from './pages/AuthCallback'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/admin/orders" element={<AdminOrdersPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
               </Routes>
             </main>

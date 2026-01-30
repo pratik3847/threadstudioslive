@@ -202,7 +202,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs at: `http://localhost:3000`
+Frontend runs at: `http://localhost:5173`
 
 ## 🔐 OAuth Setup
 
@@ -224,7 +224,7 @@ Frontend runs at: `http://localhost:3000`
 2. Click "New OAuth App"
 3. Fill in details:
    - Application name: The Thread Studioss
-   - Homepage URL: `http://localhost:3000`
+   - Homepage URL: `http://localhost:5173`
    - Authorization callback URL: `http://localhost:5000/api/auth/github/callback`
 4. Copy Client ID and Client Secret to `.env`
 

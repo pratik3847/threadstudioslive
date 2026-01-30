@@ -46,7 +46,10 @@ const LoginPage = () => {
     };
 
     const handleOAuthLogin = (provider) => {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = rawApiUrl.replace(/\/$/, '').endsWith('/api')
+            ? rawApiUrl.replace(/\/$/, '')
+            : `${rawApiUrl.replace(/\/$/, '')}/api`;
         window.location.href = `${apiUrl}/auth/${provider}`;
     };
 
@@ -113,13 +116,6 @@ const LoginPage = () => {
                     >
                         <i className="fab fa-google"></i>
                         Google
-                    </button>
-                    <button
-                        onClick={() => handleOAuthLogin('github')}
-                        className="auth-btn oauth-btn github"
-                    >
-                        <i className="fab fa-github"></i>
-                        GitHub
                     </button>
                 </div>
 

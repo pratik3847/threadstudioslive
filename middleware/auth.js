@@ -24,7 +24,9 @@ const authenticateToken = async (req, res, next) => {
             });
         }
 
-        if (!user.isVerified) {
+        // In production you typically require verified accounts.
+        // For local/dev flows (no email verification implemented), allow access.
+        if (process.env.NODE_ENV === 'production' && !user.isVerified) {
             return res.status(401).json({ 
                 error: 'Account not verified',
                 code: 'NOT_VERIFIED' 

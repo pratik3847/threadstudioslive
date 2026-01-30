@@ -48,6 +48,9 @@
 
 .profile-header-info h1 {
     font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #2D2D2D;
+    margin-bottom: 8px;
 }
 
 /* Responsive Profile */
@@ -75,6 +78,22 @@
     .profile-header-info h1 {
         font-size: 1.8rem;
     }
+
+    .info-grid,
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions,
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -99,10 +118,6 @@
     .profile-header-info h1 {
         font-size: 1.5rem;
     }
-}
-    font-size: 2rem;
-    color: #2D2D2D;
-    margin-bottom: 8px;
 }
 
 .profile-header-info p {
@@ -297,24 +312,5 @@
 }
 
 @media (max-width: 768px) {
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
 
-    .info-grid,
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-actions,
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-        justify-content: center;
-    }
 }

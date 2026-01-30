@@ -21,7 +21,8 @@ router.get('/', validateQuery(searchSchema), async (req, res) => {
             limit = 12 
         } = req.query;
         
-        let filter = { isActive: true };
+        // Treat legacy products (missing `isActive`) as active
+        let filter = { $or: [{ isActive: true }, { isActive: { $exists: false } }] };
         
         if (category && category !== 'all') filter.category = category;
         if (featured !== undefined) filter.featured = featured === 'true';
@@ -71,7 +72,7 @@ router.get('/', validateQuery(searchSchema), async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
-        if (!product || !product.isActive) {
+        if (!product || product.isActive === false) {
             return res.status(404).json({ error: 'Product not found' });
         }
         res.json({ product });
