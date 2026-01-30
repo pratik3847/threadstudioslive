@@ -17,8 +17,38 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(morgan('combined'));
+
+const toOrigin = (value) => {
+    const cleaned = String(value || '').trim().replace(/\/$/, '');
+    if (!cleaned || cleaned.toLowerCase() === 'undefined' || cleaned.toLowerCase() === 'null') {
+        return '';
+    }
+    if (!/^https?:\/\//i.test(cleaned)) {
+        return `https://${cleaned}`;
+    }
+    return cleaned;
+};
+
+const allowedOrigins = new Set([
+    toOrigin(process.env.FRONTEND_URL),
+    toOrigin(process.env.CLIENT_URL),
+    'http://localhost:5173',
+    'http://localhost:3001'
+].filter(Boolean));
+
+const isAllowedOrigin = (origin) => {
+    if (!origin) return true; // curl/postman/no Origin header
+    if (allowedOrigins.has(origin)) return true;
+    // Allow Vercel preview/prod domains while still reflecting the exact Origin (required for credentials)
+    if (/^https:\/\/.*\.vercel\.app$/i.test(origin)) return true;
+    return false;
+};
+
 app.use(cors({
-    origin: [process.env.CLIENT_URL || 'http://localhost:5173', 'http://localhost:3001'],
+    origin: (origin, callback) => {
+        if (isAllowedOrigin(origin)) return callback(null, true);
+        return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']

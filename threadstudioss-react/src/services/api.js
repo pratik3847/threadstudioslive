@@ -1,9 +1,17 @@
 import axios from 'axios';
 
-const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const API_URL = RAW_API_URL.replace(/\/$/, '').endsWith('/api')
-    ? RAW_API_URL.replace(/\/$/, '')
-    : `${RAW_API_URL.replace(/\/$/, '')}/api`;
+const normalizeApiUrl = (raw) => {
+    const cleaned = String(raw || '').trim().replace(/\/$/, '');
+    if (!cleaned) return '';
+    return cleaned.endsWith('/api') ? cleaned : `${cleaned}/api`;
+};
+
+// In production, if VITE_API_URL isn't set, prefer same-origin `/api` (Vercel rewrite)
+// instead of defaulting to localhost (which breaks in the browser).
+const RAW_API_URL = import.meta.env.VITE_API_URL;
+const API_URL = RAW_API_URL
+    ? normalizeApiUrl(RAW_API_URL)
+    : (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
 // Create axios instance
 const api = axios.create({
