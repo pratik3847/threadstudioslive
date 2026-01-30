@@ -12,7 +12,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://threadstudioss-api.onrender.com/api/$1"
+      "destination": "https://threadstudios.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",
