@@ -13,6 +13,9 @@ const API_URL = RAW_API_URL
     ? normalizeApiUrl(RAW_API_URL)
     : (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
+// Exported for pages that need to build absolute OAuth redirect URLs.
+export const API_BASE_URL = API_URL;
+
 // Create axios instance
 const api = axios.create({
     baseURL: API_URL,

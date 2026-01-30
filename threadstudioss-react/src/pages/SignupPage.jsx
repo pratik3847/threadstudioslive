@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../services/api';
 import './Auth.css';
 
 const SignupPage = () => {
@@ -56,11 +57,7 @@ const SignupPage = () => {
     };
 
     const handleOAuthSignup = (provider) => {
-        const rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const apiUrl = rawApiUrl.replace(/\/$/, '').endsWith('/api')
-            ? rawApiUrl.replace(/\/$/, '')
-            : `${rawApiUrl.replace(/\/$/, '')}/api`;
-        window.location.href = `${apiUrl}/auth/${provider}`;
+        window.location.href = `${API_BASE_URL}/auth/${provider}`;
     };
 
     return (
