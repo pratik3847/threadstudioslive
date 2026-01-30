@@ -5,7 +5,7 @@
       "src": "threadstudioss-react/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "threadstudioss-react/dist"
+        "distDir": "dist"
       }
     }
   ],
