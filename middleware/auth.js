@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../model/index');
 
+const requireVerifiedAccounts = () => {
+    const raw = String(process.env.REQUIRE_VERIFIED_ACCOUNTS || '').trim().toLowerCase();
+    return raw === 'true' || raw === '1' || raw === 'yes';
+};
+
 // Middleware for JWT verification
 const authenticateToken = async (req, res, next) => {
     try {
@@ -24,9 +29,9 @@ const authenticateToken = async (req, res, next) => {
             });
         }
 
-        // In production you typically require verified accounts.
-        // For local/dev flows (no email verification implemented), allow access.
-        if (process.env.NODE_ENV === 'production' && !user.isVerified) {
+        // Email verification isn't implemented end-to-end in this project.
+        // Only enforce verified accounts when explicitly enabled.
+        if (requireVerifiedAccounts() && !user.isVerified) {
             return res.status(401).json({ 
                 error: 'Account not verified',
                 code: 'NOT_VERIFIED' 
@@ -78,7 +83,7 @@ const optionalAuth = async (req, res, next) => {
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
             const user = await User.findById(decoded.userId).select('-password');
-            if (user && user.isVerified) {
+            if (user && (user.isVerified || !requireVerifiedAccounts())) {
                 req.user = user;
             }
         }

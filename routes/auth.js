@@ -10,6 +10,11 @@ const {
     userLoginSchema 
 } = require('../utils/validation');
 
+const requireVerifiedAccounts = () => {
+    const raw = String(process.env.REQUIRE_VERIFIED_ACCOUNTS || '').trim().toLowerCase();
+    return raw === 'true' || raw === '1' || raw === 'yes';
+};
+
 const resolveFrontendUrl = () => {
     const candidate = process.env.FRONTEND_URL || process.env.CLIENT_URL;
 
@@ -71,7 +76,9 @@ router.post('/register', validate(userRegistrationSchema), async (req, res) => {
             email: email.toLowerCase().trim(),
             password: hashedPassword,
             authProvider: 'local',
-            isVerified: process.env.NODE_ENV !== 'production' // Require email verification only in production
+            // This project doesn't implement email verification end-to-end.
+            // Keep accounts usable by default; enable strict verification via REQUIRE_VERIFIED_ACCOUNTS.
+            isVerified: !requireVerifiedAccounts()
         });
 
         await user.save();
