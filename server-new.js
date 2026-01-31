@@ -29,10 +29,23 @@ const toOrigin = (value) => {
     return cleaned;
 };
 
+const parseOriginList = (value) => {
+    return String(value || '')
+        .split(',')
+        .map((item) => toOrigin(item))
+        .filter(Boolean);
+};
+
 const allowedOrigins = new Set([
     toOrigin(process.env.FRONTEND_URL),
     toOrigin(process.env.CLIENT_URL),
+    ...parseOriginList(process.env.CORS_ORIGINS),
+    // Production custom domains
+    'https://threadstudios.live',
+    'https://www.threadstudios.live',
+    // Local development
     'http://localhost:5173',
+    'http://localhost:3000',
     'http://localhost:3001'
 ].filter(Boolean));
 
@@ -44,7 +57,7 @@ const isAllowedOrigin = (origin) => {
     return false;
 };
 
-app.use(cors({
+const corsOptions = {
     origin: (origin, callback) => {
         if (isAllowedOrigin(origin)) return callback(null, true);
         return callback(new Error(`Not allowed by CORS: ${origin}`));
@@ -52,7 +65,10 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

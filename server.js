@@ -15,10 +15,14 @@ app.use(helmet()); // Security headers
 app.use(morgan('combined')); // Logging
 app.use(cors({
     origin: [
-        process.env.FRONTEND_URL || 'http://localhost:3000',
+        process.env.FRONTEND_URL,
+        process.env.CLIENT_URL,
+        'https://threadstudios.live',
+        'https://www.threadstudios.live',
+        'http://localhost:3000',
         'http://localhost:5173',
         'http://localhost:5174'
-    ],
+    ].filter(Boolean),
     credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
