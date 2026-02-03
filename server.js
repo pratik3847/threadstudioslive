@@ -19,6 +19,8 @@ app.use(cors({
         process.env.CLIENT_URL,
         'https://threadstudios.live',
         'https://www.threadstudios.live',
+        'https://threadstudios.in',
+        'https://www.threadstudios.in',
         'http://localhost:3000',
         'http://localhost:5173',
         'http://localhost:5174'
